@@ -1,37 +1,37 @@
 # Pre-processing functions
 
-from scipy import signal
+from scipy import signal, fft
+import numpy as np
 
 def remove_dc_offset(data):
     return data - data.mean()
 
-def notch_filter(freq=50.0, fs=250, Q=50):
-    return signal.iirnotch(freq, freq / Q, fs=fs)
+def notch_filter(x, fs, notch_freq=50, quality_factor=20, ampl_response=False):
+    # Design a notch filter 
+    b, a = signal.iirnotch(notch_freq, quality_factor, fs)
+    # Apply notch filter to the noisy signal
+    filtered_x = signal.filtfilt(b, a, x)
+    if ampl_response:
+        # Compute magnitude response of the designed filter
+        freq, h = signal.freqz(b, a, fs=fs)
+        return filtered_x, freq, h
+    return filtered_x
     
-def butter_filter(low=5.0, high=50.0, order=4, fs=250):
-    nyq = fs / 2
-    return signal.butter(order, [low / nyq, high / nyq], btype='bandpass')
 
-def cheby_filter(low=5.0, high=50.0, order=1, fs=250, rp=1):
-    nyq = fs / 2
-    return signal.cheby1(order, rp, [low / nyq, high / nyq], btype='bandpass')
+def cheby_filter(x, fs, low_f, high_f, order=1, rp=1, ampl_response=False):
+    # Design Chebyshev bandpass filter
+    b, a = signal.cheby1(order, rp, [low_f, high_f], btype='bandpass', fs=fs)
+    # Apply Chebyshev bandpass filter
+    filtered_x = signal.filtfilt(b, a, x)
+    if ampl_response:
+        # Compute magnitude response of the designed filter
+        freq, h = signal.freqz(b, a, fs=fs)
+        return filtered_x, freq, h
+    return filtered_x
 
-def butter_bandpass_filter(data, lowcut, highcut, sample_rate, order):
-    '''
-    Returns bandpass filtered data between the frequency ranges specified in the input.
-    Args:
-        data (numpy.ndarray): array of samples. 
-        lowcut (float): lower cutoff frequency (Hz).
-        highcut (float): lower cutoff frequency (Hz).
-        sample_rate (float): sampling rate (Hz).
-        order (int): order of the bandpass filter.
-    Returns:
-        (numpy.ndarray): bandpass filtered data.
-    '''
-    ""
-    nyq = 0.5 * sample_rate
-    low = lowcut / nyq
-    high = highcut / nyq
-    b, a = butter(order, [low, high], btype='band')
-    y = filtfilt(b, a, data)
-    return y
+def signal_fft(x, fs):
+    Nfft = int(2**np.ceil(np.log2(len(x))))
+    x_fft = fft.fft(x, n=Nfft)[0:Nfft//2]
+    # Compute the corresponding frequencies
+    fft_freqs = fft.fftfreq(Nfft, 1/fs)[:Nfft//2]
+    return 2.0/Nfft * np.abs(x_fft), fft_freqs

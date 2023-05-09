@@ -1,6 +1,7 @@
 import pickle
 import numpy as np
 import matplotlib.pyplot as plt
+from signal_processing.preprocessing_functions import *
 
 EEG_CHN = {
     'PO7': 0,
@@ -34,9 +35,27 @@ print(data.keys())
 eeg = np.transpose(eeg, (2, 3, 0, 1))
 
 # first 2 seconds of the first block of the first channel (OZ electrode)
+oz_eeg = remove_dc_offset(eeg[0, 0, EEG_CHN['OZ'], :])
+po7_eeg = remove_dc_offset(eeg[0, 0, EEG_CHN['PO7'], :])
+# plt.figure(figsize=(10, 5))
+# plt.plot(t[:2*250], oz_eeg[:2*250], color='red')
+# plt.plot(t[:2*250], po7_eeg[:2*250], color='blue')
+# plt.xlabel('Time (s)')
+# plt.ylabel('Amplitude')  # uV?
+# plt.show()
+
+recorded_data_path = r'data_collection\recording\first_recording\test_eeg_channels_01.csv'
+recorded_data = np.loadtxt(recorded_data_path)
+rec_tf = recorded_data.shape[0] / fs
+print(rec_tf)
+rec_t = np.arange(0, rec_tf, 1/fs)
+print(recorded_data.shape)
+ch0 = recorded_data[:, 0]
+ch1 = recorded_data[:, 1]
+
 plt.figure(figsize=(10, 5))
-plt.plot(t[:2*250], eeg[0, 0, EEG_CHN['OZ'], :2*250])
+plt.plot(rec_t, ch0, color='red')
+plt.plot(rec_t, ch1, color='blue')
 plt.xlabel('Time (s)')
 plt.ylabel('Amplitude')  # uV?
 plt.show()
-
