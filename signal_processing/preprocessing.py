@@ -5,6 +5,7 @@ from brainflow.board_shim import BoardShim, BoardIds, BrainFlowInputParams
 import matplotlib.pyplot as plt
 import pandas as pd
 
+'''
 datapath = r'data_collection\recording\first_recording\gui_data\OpenBCISession_2023-05-03_19-37-36\BrainFlow-RAW_2023-05-03_19-37-36_1.csv'
 
 data = DataFilter.read_file(datapath)
@@ -31,6 +32,14 @@ plt.plot(time[0:fs*2], eeg[0][0:fs*2], label='ch1')
 plt.plot(time[0:fs*2], eeg[1][0:fs*2], label='ch2')
 plt.legend()
 plt.show()
+'''
+data_folder = r'data_collection\recorded_data\2023-05-10\test_session\01-25-00'
+data = format_data(data_folder)
+fs = 200
+# First frequency, first trial, all channels except last one (timestamp), all samples
+eeg = data[0, 0, :-1, :]
+time = data[0, 0, -1, :]
+t = np.arange(0, len(time)/fs, 1/fs)
 
 for cnt, ch in enumerate(eeg):
     # Notch filter

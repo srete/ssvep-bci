@@ -13,9 +13,12 @@ import time
 
 from gui_functions import *
 
-blink_fs = [5, 10, 15, 18]
-blink_time = 5
-pause_time = 2
+blink_fs = [5, 6, 8, 10]  #Hz
+blink_time = 2
+pause_time = 0.5
+n_trials = 2
+pause_between_trials = 2
+session_name = 'test_session'
 
 # initialize gui
 root = tk.Tk()
@@ -47,7 +50,7 @@ frame4.grid(row=1, column=1, padx=0.5*w, pady=0.5*h)
 
 def main():
     frames = [frame1, frame2, frame3, frame4]
-    start_recording(frames, blink_fs, blink_time, pause_time, text_label)
+    start_recording(frames, blink_fs, blink_time, pause_time, n_trials, pause_between_trials, session_name, text_label)
 
 # text label to show notifications
 text_label = tk.Label(btn_frame, text='Text Label')

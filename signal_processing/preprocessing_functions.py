@@ -2,6 +2,29 @@
 
 from scipy import signal, fft
 import numpy as np
+import os
+import pandas as pd
+
+def format_data(data_folder):
+    # get all csv files in data_folder
+    csv_files = [f for f in os.listdir(data_folder) if f.endswith('.csv')]
+    data = []
+
+    for f in csv_files:
+        data_path = os.path.join(data_folder, f)
+        df = pd.read_csv(data_path)
+        # remove unnamed column
+        df = df.loc[:, ~df.columns.str.contains('^Unnamed')]
+        # group by blink_freq, and convert each group to numpy array witout blink_freq column
+        df = df.groupby('blink_freq').apply(lambda x: x.to_numpy()[:, 1:].transpose())
+        data_curr_trial = np.array(df.tolist())
+        print(data_curr_trial.shape)  # (n_freqs, n_channels+1, n_samples)
+        #print(data_curr_trial.tolist())
+        data.append(data_curr_trial)
+
+    data = np.stack( data, axis=0 )
+    data = data.transpose(1, 0, 2, 3)  # (n_freqs, n_trials, n_channels+1, n_samples)
+    return data
 
 def remove_dc_offset(data):
     return data - data.mean()
