@@ -18,13 +18,14 @@ pprint(BoardShim.get_board_descr(board_id))
 # Initizalizing board
 BoardShim.enable_dev_board_logger()
 params = BrainFlowInputParams()
-params.serial_port = 'COM4'
+params.serial_port = 'COM7'
 board = BoardShim(board_id, params)
 board.prepare_session()
 board.start_stream ()
 time.sleep(10)
 # data = board.get_current_board_data (256) # get latest 256 packages or less, doesnt remove them from internal buffer
 data = board.get_board_data()  # get all data and remove it from internal buffer
+print('Board data shape: ', data.shape)
 board.stop_stream()
 board.release_session()
 
@@ -35,8 +36,13 @@ print('Data From the Board')
 print(df.head(10))
 
 # Demo for data serialization using brainflow API, we recommend to use it instead pandas.to_csv()
-DataFilter.write_file(data, 'test.csv', 'w')  # use 'a' for append mode
-restored_data = DataFilter.read_file('test.csv')
+DataFilter.write_file(data, r'data_collection\recording\test.csv', 'w')  # use 'a' for append mode
+restored_data = DataFilter.read_file(r'data_collection\recording\test.csv')
 restored_df = pd.DataFrame(np.transpose(restored_data))
 print('Data From the File')
 print(restored_df.head(10))
+
+# Plot first eeg channel
+import matplotlib.pyplot as plt
+plt.plot(data[eeg_channels[0]])
+plt.show()

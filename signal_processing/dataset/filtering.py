@@ -46,7 +46,7 @@ eeg = data['data']
 eeg = np.transpose(eeg, (2, 3, 0, 1))  # shape = (n_frequencies, n_blocks, n_channels, n_samples)
 
 # first 2 seconds of the first block of the first channel (OZ electrode)
-oz_eeg = remove_dc_offset(eeg[3, 0, EEG_CHN['OZ'], :])
+oz_eeg = remove_dc_offset(eeg[-1, 0, EEG_CHN['OZ'], :])
 #po7_eeg = remove_dc_offset(eeg[0, 0, EEG_CHN['PO7'], :])
 
 '''

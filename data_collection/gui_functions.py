@@ -22,7 +22,7 @@ def initialize_board(port):
 
 def board_recording(board, recording_time):
     board_id = BoardIds.GANGLION_BOARD.value
-    board.start_stream ()
+    board.start_stream()
     time.sleep(recording_time)
     # data = board.get_current_board_data (256) # get latest 256 packages or less, doesnt remove them from internal buffer
     data = board.get_board_data()  # get all data and remove it from internal buffer
@@ -30,10 +30,10 @@ def board_recording(board, recording_time):
     board.release_session()
     eeg_chn = BoardShim.get_eeg_channels(board_id)
     timestamps_chn = BoardShim.get_timestamp_channel(board_id)
-    return data[:, eeg_chn+timestamps_chn]
+    return data[eeg_chn+[timestamps_chn]]
 
 # function to make squere blink
-def blink(frame, blink_freq, blink_time):
+def blink(frame, blink_freq, blink_time):    
     if blink_time > 0:
         #for frame in frames:
         bg_color = frame.cget('bg')
@@ -56,74 +56,75 @@ def blink_frames(frames, freqs, blink_time):
         t.start()
 
 def blink_all(frames, freqs, blink_time, pause_time, n_trials, pause_between_trials, q1, q2, q3, text_label):
-    try:
+    #try:
 
-        for trial_num in range(n_trials):
-            q3.put(trial_num)
-            text_label.config(text=f'Trial {trial_num+1} of {n_trials}')
+    for trial_num in range(n_trials):
+        #q3.put(trial_num)
+        text_label.config(text=f'Trial {trial_num+1} of {n_trials}')
 
-            for i, frame in enumerate(frames):
-                q1.put(i)
-                q2.get()
-                text_label.config(text=f'Recording data from squere {i+1}')
-                frame.config(highlightbackground='red', highlightthickness=3)
-                # 1st version
-                #blink(frame, freqs[i], blink_time)
-                ############
-                # 2nd version
-                blink_frames(frames, freqs, blink_time) 
-                time.sleep(blink_time)       
-                ############                
-                frame.config(highlightbackground='black', highlightthickness=0)
-                text_label.config(text=f'Pause for {pause_time} seconds')
-                time.sleep(pause_time)
-        
-            text_label.config(text=f'Pause between trials for {pause_between_trials} seconds')
-            time.sleep(pause_between_trials)
-        return
-    except:
-        return
+        for i, frame in enumerate(frames):
+            #q1.put(i)
+            #q2.get()
+            #print(f'Frame{i+1} start', time.time())
+            text_label.config(text=f'Recording data from squere {i+1}')
+            frame.config(highlightbackground='red', highlightthickness=3)
+            # 1st version
+            blink(frame, freqs[i], blink_time)
+            ############
+            # 2nd version
+            #blink_frames(frames, freqs, blink_time) 
+            #time.sleep(blink_time)       
+            ############                
+            frame.config(highlightbackground='black', highlightthickness=0)
+            text_label.config(text=f'Pause for {pause_time} seconds')
+            #print(f'Frame{i+1} end', time.time())
+            time.sleep(pause_time)
+    
+        text_label.config(text=f'Pause between trials for {pause_between_trials} seconds')
+        time.sleep(pause_between_trials)
+    return
+    #except:
+        #return
 
 def record_data(q1, q2, q3, freqs, text_label, recording_time, session_path, n_trials):
-    #board = initialize_board('COM4')
+    board = initialize_board('COM7')
     curr_time = time.strftime('%H-%M-%S')
-    try:
+    #try:
+    while True:
+        df = pd.DataFrame(columns=['blink_freq', 'ch1', 'ch2', 'ch3', 'ch4', 'timestamp'])
+        trial_num = q3.get()
+        #print(trial_num)
         while True:
-            df = pd.DataFrame(columns=['blink_freq', 'ch1', 'ch2', 'ch3', 'ch4', 'timestamp'])
-            trial_num = q3.get()
-            print(trial_num)
-            while True:
-                # pandas dataframe with columns: blink_freq, ch1, ch2, ch3, ch4
-                data = q1.get()
-                text_label.config(text=f'Prepare to record data from squere {data+1}')
-                # prepare recording
-                time.sleep(2)
-                #board.prepare_session()
-                # recoring is ready, send signal to blink and start recording
-                q2.put(1)
-                
-                time.sleep(recording_time)
-                recorded_data = np.random.rand(256, 5)
-                #recorded_data = board_recording(board, recording_time)
-                recorded_data = np.concatenate((np.full(shape=(recorded_data.shape[0], 1), fill_value=freqs[data]), recorded_data), axis=1)
-                # create dataframe with recorded data
-                curr_df = pd.DataFrame(recorded_data, columns=['blink_freq', 'ch1', 'ch2', 'ch3', 'ch4', 'timestamp'])
-                # add recorded data to dataframe with pandas.concat
-                df = pd.concat([df, curr_df], ignore_index=True)
-                if data == 3:
-                    # save dataframe to csv file
-                    # create folder for current time if it doesn't exist
-                    time_path = f'{session_path}\\{curr_time}'
-                    if not os.path.exists(time_path):
-                        os.mkdir(time_path)
-                    df.to_csv(f'{time_path}\\trial_{trial_num}.csv')
-                    break
+            # pandas dataframe with columns: blink_freq, ch1, ch2, ch3, ch4
+            data = q1.get()
+            text_label.config(text=f'Prepare to record data from squere {data+1}')
+            # prepare recording
+            #time.sleep(2)
+            board.prepare_session()
+            # recoring is ready, send signal to blink and start recording
+            q2.put(1)
+            #time.sleep(recording_time)
+            #recorded_data = np.random.rand(256, 5)
+            recorded_data = board_recording(board, recording_time).transpose()
+            recorded_data = np.concatenate((np.full(shape=(recorded_data.shape[0], 1), fill_value=freqs[data]), recorded_data), axis=1)
+            # create dataframe with recorded data
+            curr_df = pd.DataFrame(recorded_data, columns=['blink_freq', 'ch1', 'ch2', 'ch3', 'ch4', 'timestamp'])
+            # add recorded data to dataframe with pandas.concat
+            df = pd.concat([df, curr_df], ignore_index=True)
+            if data == 3:
+                # save dataframe to csv file
+                # create folder for current time if it doesn't exist
+                time_path = f'{session_path}\\{curr_time}'
+                if not os.path.exists(time_path):
+                    os.mkdir(time_path)
+                df.to_csv(f'{time_path}\\trial_{trial_num}.csv')
+                break
 
-            if trial_num == n_trials-1:
-                text_label.config(text=f'Data collection is finished')
-                return
-    except:
-        return
+        if trial_num == n_trials-1:
+            text_label.config(text=f'Data collection is finished')
+            return
+    #except:
+        #return
 
 def start_recording(frames, freqs, blink_time, pause_time, n_trials, pause_between_trials, session_name, text_label):
     # create folder for current date if it doesn't exist
@@ -145,7 +146,7 @@ def start_recording(frames, freqs, blink_time, pause_time, n_trials, pause_betwe
     # create thread
     blink_thread = Thread(target=blink_all, args=(frames, freqs, blink_time, pause_time, n_trials, pause_between_trials, q1, q2, q3, text_label))
     # second thread to record data
-    record_thread = Thread(target=record_data, args=(q1, q2, q3, freqs, text_label, blink_time, session_path, n_trials))
+    #record_thread = Thread(target=record_data, args=(q1, q2, q3, freqs, text_label, blink_time, session_path, n_trials))
     # start both threads
-    record_thread.start()
+    #record_thread.start()
     blink_thread.start()

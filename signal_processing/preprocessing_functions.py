@@ -9,22 +9,33 @@ def format_data(data_folder):
     # get all csv files in data_folder
     csv_files = [f for f in os.listdir(data_folder) if f.endswith('.csv')]
     data = []
-
+    min_shapes_per_trial = []
     for f in csv_files:
         data_path = os.path.join(data_folder, f)
         df = pd.read_csv(data_path)
+        #print('DF dimenstions: ', df.shape)
         # remove unnamed column
-        df = df.loc[:, ~df.columns.str.contains('^Unnamed')]
+        df = df.loc[:, ~df.columns.str.contains('^Unnamed')]        
         # group by blink_freq, and convert each group to numpy array witout blink_freq column
         df = df.groupby('blink_freq').apply(lambda x: x.to_numpy()[:, 1:].transpose())
-        data_curr_trial = np.array(df.tolist())
-        print(data_curr_trial.shape)  # (n_freqs, n_channels+1, n_samples)
-        #print(data_curr_trial.tolist())
-        data.append(data_curr_trial)
+        # get blink_freqs values
+        freqs = df.index.values
+        shapes = [x.shape[-1] for x in df]
+        min_shapes_per_trial.append(min(shapes))
+        data.append(df.tolist())
 
-    data = np.stack( data, axis=0 )
-    data = data.transpose(1, 0, 2, 3)  # (n_freqs, n_trials, n_channels+1, n_samples)
-    return data
+    data_list = []
+    for trail in data:
+        trial_data = []
+        for freq in trail:
+            freq = freq[:, :min(min_shapes_per_trial)]
+            trial_data.append(freq)
+        trial_data = np.stack( trial_data, axis=0 )
+        data_list.append(trial_data)
+
+    data_arr = np.stack( data_list, axis=0 )
+    data_arr = data_arr.transpose(1, 0, 2, 3)  # ()
+    return freqs, data_arr
 
 def remove_dc_offset(data):
     return data - data.mean()

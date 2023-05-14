@@ -13,12 +13,12 @@ import time
 
 from gui_functions import *
 
-blink_fs = [5, 6, 8, 10]  #Hz
-blink_time = 2
+blink_fs = [12, 13, 14, 15]  #Hz
+blink_time = 20
 pause_time = 0.5
-n_trials = 2
+n_trials = 1
 pause_between_trials = 2
-session_name = 'test_session'
+session_name = 'teodora-vf'
 
 # initialize gui
 root = tk.Tk()
