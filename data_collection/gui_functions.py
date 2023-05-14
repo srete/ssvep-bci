@@ -59,12 +59,12 @@ def blink_all(frames, freqs, blink_time, pause_time, n_trials, pause_between_tri
     #try:
 
     for trial_num in range(n_trials):
-        #q3.put(trial_num)
+        q3.put(trial_num)
         text_label.config(text=f'Trial {trial_num+1} of {n_trials}')
 
         for i, frame in enumerate(frames):
-            #q1.put(i)
-            #q2.get()
+            q1.put(i)
+            q2.get()
             #print(f'Frame{i+1} start', time.time())
             text_label.config(text=f'Recording data from squere {i+1}')
             frame.config(highlightbackground='red', highlightthickness=3)
@@ -99,12 +99,9 @@ def record_data(q1, q2, q3, freqs, text_label, recording_time, session_path, n_t
             data = q1.get()
             text_label.config(text=f'Prepare to record data from squere {data+1}')
             # prepare recording
-            #time.sleep(2)
             board.prepare_session()
             # recoring is ready, send signal to blink and start recording
             q2.put(1)
-            #time.sleep(recording_time)
-            #recorded_data = np.random.rand(256, 5)
             recorded_data = board_recording(board, recording_time).transpose()
             recorded_data = np.concatenate((np.full(shape=(recorded_data.shape[0], 1), fill_value=freqs[data]), recorded_data), axis=1)
             # create dataframe with recorded data
@@ -146,7 +143,7 @@ def start_recording(frames, freqs, blink_time, pause_time, n_trials, pause_betwe
     # create thread
     blink_thread = Thread(target=blink_all, args=(frames, freqs, blink_time, pause_time, n_trials, pause_between_trials, q1, q2, q3, text_label))
     # second thread to record data
-    #record_thread = Thread(target=record_data, args=(q1, q2, q3, freqs, text_label, blink_time, session_path, n_trials))
+    record_thread = Thread(target=record_data, args=(q1, q2, q3, freqs, text_label, blink_time, session_path, n_trials))
     # start both threads
-    #record_thread.start()
+    record_thread.start()
     blink_thread.start()
