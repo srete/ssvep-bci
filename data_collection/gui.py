@@ -1,5 +1,5 @@
 # This app is simple python gui for steady state visual evoked potential (SSVEP) data collection.
-# It has 4 squeres with different blinking frequencies.
+# It has 4 squares with different blinking frequencies.
 # User should look at one of them and collect data
 # After that data will be saved to csv file.
 
@@ -13,38 +13,71 @@ import time
 
 from gui_functions import *
 
-blink_fs = [12, 13, 14, 15]  #Hz
-blink_time = 20
+# get display refresh rate
+refresh_rate = 60  #Hz
+blink_fs = [refresh_rate/8, refresh_rate/7, refresh_rate/6, refresh_rate/5]  #Hz
+#blink_fs = [1, 2, 3, 4]
+blink_time = 11
 pause_time = 0.5
-n_trials = 1
-pause_between_trials = 2
-session_name = 'teodora-vf'
+n_trials = 3
+pause_between_trials = 1
+session_name = 'teodora'
+# get current date
+date = time.strftime('%Y-%m-%d')
+# write parameters to txt file
+info_path = r'data_collection\recorded_data\{}\{}\info.txt'.format(date, session_name)
+
+# create folder with info_path if it doesn't exist
+if not os.path.exists(os.path.dirname(info_path)):
+    os.makedirs(os.path.dirname(info_path))
+print(info_path)
+with open(info_path, 'w') as f:
+    # write current time in format: hour-minute-second in first line
+    curr_time = time.strftime('%H-%M-%S')
+    f.write(curr_time + '\n')
+    # write refresh rate in second line
+    f.write(f'Refresh rate: {refresh_rate}' + '\n')
+    # write blinking frequencies in third line
+    f.write(f'Blinking frequencies: {blink_fs}'+ '\n')
+    # write blinking time in fourth line
+    f.write(f'Blinking time: {blink_time}'+ '\n')
+    # write pause time in fifth line
+    f.write(f'Pause time: {pause_time}'+ '\n')
+    # write number of trials in sixth line
+    f.write(f'Number of trials: {n_trials}'+ '\n')
+    # write pause between trials in seventh line
+    f.write(f'Pause between trials: {pause_between_trials}'+ '\n')
+
 
 # initialize gui
 root = tk.Tk()
 root.title('SSVEP Data Collection')
 root.geometry('1920x1080')
 
-# blinking frames dimenstions
-w = 150
-h = 150
 
-stimulus_frame = tk.Frame(root, width=0.25*root.winfo_width(), height=0.25*root.winfo_height(), relief=tk.RAISED, bd=2)
+# blinking frames dimenstions
+w = 250
+h = 200
+
+# set color of the background
+root.configure(bg='black')
+
+stimulus_frame = tk.Frame(root, width=0.5*root.winfo_width(), height=0.5*root.winfo_height(), relief=tk.RAISED, bd=2, bg='black')
 stimulus_frame.grid(row=0, column=0, padx=10, pady=10)
 
 btn_frame = tk.Frame(root, width=0.25*root.winfo_width(), height=0.25*root.winfo_height(), relief=tk.RAISED, bd=2)
 btn_frame.grid(row=0, column=1, padx=10, pady=10, sticky='n')
 
-# 1st squere
+# 1st square
 frame1 = tk.Frame(stimulus_frame, bg='black', width=w, height=h)
 frame1.grid(row=0, column=0, padx=0.5*w, pady=0.5*h)
-# 2nd squere
+# 2nd square
 frame2 = tk.Frame(stimulus_frame, bg='black', width=w, height=h)
 frame2.grid(row=0, column=1, padx=0.5*w, pady=0.5*h)
-# 3rd squere
+# 3rd square
 frame3 = tk.Frame(stimulus_frame, bg='black', width=w, height=h)
 frame3.grid(row=1, column=0, padx=0.5*w, pady=0.5*h)
-# 4th squere
+# 4th square
 frame4 = tk.Frame(stimulus_frame, bg='black', width=w, height=h)
 frame4.grid(row=1, column=1, padx=0.5*w, pady=0.5*h)
 

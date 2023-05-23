@@ -17,12 +17,14 @@ def initialize_board(port):
     params = BrainFlowInputParams()
     params.serial_port = port
     board_id = BoardIds.GANGLION_BOARD.value
+    #board_id = BoardIds.SYNTHETIC_BOARD.value
     board = BoardShim(board_id, params)
     return board
 
-def board_recording(board, recording_time):
+def board_recording(board, recording_time, n_samples):
     board_id = BoardIds.GANGLION_BOARD.value
-    board.start_stream()
+    #board_id = BoardIds.SYNTHETIC_BOARD.value
+    board.start_stream(n_samples)
     time.sleep(recording_time)
     # data = board.get_current_board_data (256) # get latest 256 packages or less, doesnt remove them from internal buffer
     data = board.get_board_data()  # get all data and remove it from internal buffer
@@ -34,16 +36,13 @@ def board_recording(board, recording_time):
 
 # function to make squere blink
 def blink(frame, blink_freq, blink_time):    
-    if blink_time > 0:
-        #for frame in frames:
+    n_repeats = int(blink_time*blink_freq)
+    for i in range(n_repeats):
         bg_color = frame.cget('bg')
-        frame.config(bg='gray')
+        frame.config(bg='white')
         time.sleep(1/(2*blink_freq))
-        #for frame in frames:
         frame.config(bg=bg_color)
         time.sleep(1/(2*blink_freq))
-        blink(frame, blink_freq, blink_time-1/blink_freq)
-    return
 
 def blink_frames(frames, freqs, blink_time):
     # create thread for each frame
@@ -86,7 +85,7 @@ def blink_all(frames, freqs, blink_time, pause_time, n_trials, pause_between_tri
     #except:
         #return
 
-def record_data(q1, q2, q3, freqs, text_label, recording_time, session_path, n_trials):
+def record_data(q1, q2, q3, freqs, text_label, recording_time, session_path, n_trials, n_samples):
     board = initialize_board('COM7')
     curr_time = time.strftime('%H-%M-%S')
     #try:
@@ -102,7 +101,7 @@ def record_data(q1, q2, q3, freqs, text_label, recording_time, session_path, n_t
             board.prepare_session()
             # recoring is ready, send signal to blink and start recording
             q2.put(1)
-            recorded_data = board_recording(board, recording_time).transpose()
+            recorded_data = board_recording(board, recording_time, n_samples).transpose()
             recorded_data = np.concatenate((np.full(shape=(recorded_data.shape[0], 1), fill_value=freqs[data]), recorded_data), axis=1)
             # create dataframe with recorded data
             curr_df = pd.DataFrame(recorded_data, columns=['blink_freq', 'ch1', 'ch2', 'ch3', 'ch4', 'timestamp'])
@@ -124,6 +123,8 @@ def record_data(q1, q2, q3, freqs, text_label, recording_time, session_path, n_t
         #return
 
 def start_recording(frames, freqs, blink_time, pause_time, n_trials, pause_between_trials, session_name, text_label):
+    fs = 200  #Hz
+    n_samples = int(blink_time*fs)
     # create folder for current date if it doesn't exist
     date = time.strftime('%Y-%m-%d')
     # create folder for current date if it doesn't exist
@@ -143,7 +144,7 @@ def start_recording(frames, freqs, blink_time, pause_time, n_trials, pause_betwe
     # create thread
     blink_thread = Thread(target=blink_all, args=(frames, freqs, blink_time, pause_time, n_trials, pause_between_trials, q1, q2, q3, text_label))
     # second thread to record data
-    record_thread = Thread(target=record_data, args=(q1, q2, q3, freqs, text_label, blink_time, session_path, n_trials))
+    record_thread = Thread(target=record_data, args=(q1, q2, q3, freqs, text_label, blink_time, session_path, n_trials, n_samples))
     # start both threads
     record_thread.start()
     blink_thread.start()
