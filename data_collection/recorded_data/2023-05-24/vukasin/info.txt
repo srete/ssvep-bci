@@ -1,0 +1,7 @@
+17-34-27
+Refresh rate: 60
+Blinking frequencies: [15, 12, 8.571428571428571, 7.5]
+Blinking time: 21
+Pause time: 0.5
+Number of trials: 2
+Pause between trials: 1

@@ -18,8 +18,8 @@ frame_colors = ['black', 'black', 'black', 'black']
 def initialize_board(port):
     params = BrainFlowInputParams()
     params.serial_port = port
-    #board_id = BoardIds.GANGLION_BOARD.value
-    board_id = BoardIds.SYNTHETIC_BOARD.value
+    board_id = BoardIds.GANGLION_BOARD.value
+    #board_id = BoardIds.SYNTHETIC_BOARD.value
     board = BoardShim(board_id, params)
     return board
 
@@ -85,11 +85,11 @@ def blink_all(frames, freqs, blink_time, pause_time, n_trials, pause_between_tri
             text_label.config(text=f'Recording data from squere {i+1}')
             frame.config(highlightbackground='red', highlightthickness=3)
             # 1st version
-            #blink(frame, freqs[i], blink_time, i)
+            blink(frame, freqs[i], blink_time, i)
             ############
             # 2nd version
-            blink_frames(frames, freqs, blink_time) 
-            time.sleep(blink_time)       
+            #blink_frames(frames, freqs, blink_time) 
+            #time.sleep(blink_time)       
             ############                
             frame.config(highlightbackground='black', highlightthickness=0)
             text_label.config(text=f'Pause for {pause_time} seconds')

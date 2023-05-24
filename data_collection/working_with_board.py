@@ -8,12 +8,12 @@ import numpy as np
 import os
 
 freq = 12
-recording_time = 11
+recording_time = 21
 
-session_name = 'teodora'
+session_name = 'caric'
 date = time.strftime('%Y-%m-%d')
 #parent_folder = r'data_collection\recorded_data\dioda'
-data_path = r'data_collection\recorded_data\dioda\{}\{}'.format(date, session_name)
+data_path = r'data_collection\recorded_data\online_app\2023-05-24\caric\data'
 # create folder with info_path if it doesn't exist
 if not os.path.exists(os.path.dirname(data_path)):
     os.makedirs(os.path.dirname(data_path))
@@ -56,7 +56,7 @@ df = pd.DataFrame(data, columns=['blink_freq', 'ch1', 'ch2', 'ch3', 'ch4', 'time
 # save data to csv file
 # current time
 curr_time = time.strftime('%H-%M-%S')
-df.to_csv(data_path + '\\' + curr_time + '.csv', index=False)
+df.to_csv(data_path + '\\' + f'{freq}_sve_Hz.csv', index=False)
 
 #data = np.concatenate((np.full(shape=(recorded_data.shape[0], 1), fill_value=freqs[data]), recorded_data), axis=1)
 # create dataframe with recorded data

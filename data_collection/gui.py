@@ -15,13 +15,13 @@ from gui_functions import *
 
 # get display refresh rate
 refresh_rate = 60  #Hz
-blink_fs = [refresh_rate/8, refresh_rate/7, refresh_rate/6, refresh_rate/5]  #Hz
-blink_fs = [15, 15, 15, 15]  #Hz
+blink_fs = [15, 12, 60/7, 7.5]  #Hz
+#blink_fs = [15, 15, 15, 15]  #Hz
 frame_colors = ['black', 'black', 'black', 'black']
 
-blink_time = 3
+blink_time = 21
 pause_time = 0.5
-n_trials = 1
+n_trials = 2
 pause_between_trials = 1
 session_name = 'synthetic'
 # get current date
