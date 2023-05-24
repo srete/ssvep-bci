@@ -16,12 +16,14 @@ from gui_functions import *
 # get display refresh rate
 refresh_rate = 60  #Hz
 blink_fs = [refresh_rate/8, refresh_rate/7, refresh_rate/6, refresh_rate/5]  #Hz
-#blink_fs = [1, 2, 3, 4]
-blink_time = 11
+blink_fs = [15, 15, 15, 15]  #Hz
+frame_colors = ['black', 'black', 'black', 'black']
+
+blink_time = 3
 pause_time = 0.5
-n_trials = 3
+n_trials = 1
 pause_between_trials = 1
-session_name = 'teodora'
+session_name = 'synthetic'
 # get current date
 date = time.strftime('%Y-%m-%d')
 # write parameters to txt file
@@ -68,17 +70,18 @@ stimulus_frame.grid(row=0, column=0, padx=10, pady=10)
 btn_frame = tk.Frame(root, width=0.25*root.winfo_width(), height=0.25*root.winfo_height(), relief=tk.RAISED, bd=2)
 btn_frame.grid(row=0, column=1, padx=10, pady=10, sticky='n')
 
+
 # 1st square
-frame1 = tk.Frame(stimulus_frame, bg='black', width=w, height=h)
+frame1 = tk.Frame(stimulus_frame, bg=frame_colors[0], width=w, height=h)
 frame1.grid(row=0, column=0, padx=0.5*w, pady=0.5*h)
 # 2nd square
-frame2 = tk.Frame(stimulus_frame, bg='black', width=w, height=h)
+frame2 = tk.Frame(stimulus_frame, bg=frame_colors[1], width=w, height=h)
 frame2.grid(row=0, column=1, padx=0.5*w, pady=0.5*h)
 # 3rd square
-frame3 = tk.Frame(stimulus_frame, bg='black', width=w, height=h)
+frame3 = tk.Frame(stimulus_frame, bg=frame_colors[2], width=w, height=h)
 frame3.grid(row=1, column=0, padx=0.5*w, pady=0.5*h)
 # 4th square
-frame4 = tk.Frame(stimulus_frame, bg='black', width=w, height=h)
+frame4 = tk.Frame(stimulus_frame, bg=frame_colors[3], width=w, height=h)
 frame4.grid(row=1, column=1, padx=0.5*w, pady=0.5*h)
 
 def main():

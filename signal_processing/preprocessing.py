@@ -4,6 +4,7 @@ from brainflow.board_shim import BoardShim, BoardIds, BrainFlowInputParams
 
 import matplotlib.pyplot as plt
 import pandas as pd
+from cca import *
 
 # Set fontsizes for plotting
 SMALL_SIZE = 12
@@ -39,9 +40,19 @@ def filter_data(noisy_data):
     data_filtered  = cheby_filter(data_notch, fs, low, high, order, rp, ampl_response=False)
     return data_filtered
 
-f = '7_5'
-data_folder = r'data_collection\recorded_data\dioda\2023-05-16\teodora\freq_{}HZ'.format(f)
+# function to split data into windows
+def split_data(data, window_size, overlap):
+    n_samples = data.shape[-1]
+    n_windows = int((n_samples - window_size)/(window_size - overlap) + 1)
+    windows = []
+    for i in range(n_windows):
+        windows.append(data[:, :, :, i*(window_size - overlap):i*(window_size - overlap) + window_size])
+    return np.stack(windows, axis=-2)
+
+f = '12'
+#data_folder = r'data_collection\recorded_data\dioda\2023-05-16\teodora\freq_{}HZ'.format(f)
 #data_folder = r'data_collection\recorded_data\online_app\freq_12HZ'
+data_folder = r'data_collection\recorded_data\dioda\2023-05-16\teodora'
 freqs, data = format_data(data_folder)
 fs = 200
 FREQ = {i: freqs[i] for i in range(len(freqs))}
@@ -65,7 +76,7 @@ data_notch = np.apply_along_axis(notch_filter, -1, noisy_data, fs, notch_freq, q
 plt.subplot(312)
 plt.plot(t, data_notch[0, 0, 0, :], label='notch')
 # Chebyshev bandpass filter
-low = 6
+low = 5
 #low=np.min(freqs) - 1  # Hz
 high = 13
 #high=np.max(freqs) + 1  # Hz
@@ -77,18 +88,31 @@ plt.subplot(313)
 plt.plot(t, data_filtered[0, 0, 0, :], label='filtered')
 plt.show()
 
-avr_data = np.mean(data_filtered, axis=1)
-print(f'Average data shape: {avr_data.shape}')
+splited_data = split_data(data_filtered, 400, 0)
+print(data_filtered.shape)
+# average data acros windows
+avr_data = np.mean(splited_data, axis=-2)
+print(avr_data.shape)
+
+# avr_data = np.mean(data_filtered, axis=1)
+# print(f'Average data shape: {avr_data.shape}')
 
 data_fft = np.apply_along_axis(signal_fft, -1, data_filtered, fs)
 fft_fs = data_fft[0, 0, 0, 1, :]
 data_fft = data_fft[:, :, :, 0, :]
 fft_avg = np.apply_along_axis(signal_fft, -1, avr_data, fs)
-fft_avg_fs = fft_avg[0, 0, 1, :]
-fft_avg = fft_avg[:, :, 0, :]
+fft_avg_fs = fft_avg[0, 0, 0, 1, :]
+fft_avg = fft_avg[:, :, :, 0, :]
 
+refresh_rate = 60  # Hz
+#target_freqs =np.array([refresh_rate/i for i in range(3, 11)])  # 6-20 Hz
+target_freqs = freqs
+ref = np.array([get_cca_reference_signals(data_filtered.shape[-1], f, 200) for f in target_freqs])
+predictions, labels = cca_classify(data_filtered, ref)
+print(target_freqs[predictions])
+print(freqs[labels])
 
-print(data_fft.shape)
+#print(data_fft.shape)
 #plt.plot(fft_fs, data_fft[1, 0, 2, :])
 #plt.show()
 
@@ -132,5 +156,5 @@ def plot_one_freq(n, data, x_axis, freq):
 #plot_trial(0, fft_avg, fft_avg_fs)
 #plot_trial(0, data_fft, fft_fs)
 
-plot_one_freq(0, data_fft[0, :, :, :], fft_fs, freqs[0])
+#plot_one_freq(0, data_fft[0, :, :, :], fft_fs, freqs[0])
 

@@ -12,12 +12,14 @@ import math as m
 import time
 import numpy as np
 
+frame_colors = ['black', 'black', 'black', 'black']
+
 
 def initialize_board(port):
     params = BrainFlowInputParams()
     params.serial_port = port
-    board_id = BoardIds.GANGLION_BOARD.value
-    #board_id = BoardIds.SYNTHETIC_BOARD.value
+    #board_id = BoardIds.GANGLION_BOARD.value
+    board_id = BoardIds.SYNTHETIC_BOARD.value
     board = BoardShim(board_id, params)
     return board
 
@@ -35,24 +37,39 @@ def board_recording(board, recording_time, n_samples):
     return data[eeg_chn+[timestamps_chn]]
 
 # function to make squere blink
-def blink(frame, blink_freq, blink_time):    
+def blink(frame, blink_freq, blink_time, j):    
     n_repeats = int(blink_time*blink_freq)
     for i in range(n_repeats):
-        bg_color = frame.cget('bg')
         frame.config(bg='white')
         time.sleep(1/(2*blink_freq))
-        frame.config(bg=bg_color)
+        frame.config(bg=frame_colors[j])
         time.sleep(1/(2*blink_freq))
+
+    # interval = 1 / (2 * blink_freq)
+    # start_time = time.time()
+    
+    # for _ in range(n_repeats):
+    #     elapsed_time = time.time() - start_time
+        
+    #     # Check if it's time to toggle the rectangle
+    #     if elapsed_time >= interval:
+    #         print('blink')
+    #         frame.config(bg=frame_colors[j] if frame.cget('bg') == 'white' else frame_colors[j])
+    #         start_time = time.time()
+    #     frame.update()
+
 
 def blink_frames(frames, freqs, blink_time):
     # create thread for each frame
+    
     threads = []
     for i, frame in enumerate(frames):
-        t = Thread(target=blink, args=(frame, freqs[i], blink_time))
+        t = Thread(target=blink, args=(frame, freqs[i], blink_time, i))
         threads.append(t)
     # start all threads
     for t in threads:
-        t.start()
+        t.start() 
+
 
 def blink_all(frames, freqs, blink_time, pause_time, n_trials, pause_between_trials, q1, q2, q3, text_label):
     #try:
@@ -68,11 +85,11 @@ def blink_all(frames, freqs, blink_time, pause_time, n_trials, pause_between_tri
             text_label.config(text=f'Recording data from squere {i+1}')
             frame.config(highlightbackground='red', highlightthickness=3)
             # 1st version
-            blink(frame, freqs[i], blink_time)
+            #blink(frame, freqs[i], blink_time, i)
             ############
             # 2nd version
-            #blink_frames(frames, freqs, blink_time) 
-            #time.sleep(blink_time)       
+            blink_frames(frames, freqs, blink_time) 
+            time.sleep(blink_time)       
             ############                
             frame.config(highlightbackground='black', highlightthickness=0)
             text_label.config(text=f'Pause for {pause_time} seconds')
