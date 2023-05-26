@@ -55,7 +55,7 @@ def split_data(data, window_size, overlap):
 f = '12'
 #data_folder = r'data_collection\recorded_data\dioda\2023-05-16\teodora\freq_{}HZ'.format(f)
 #data_folder = r'data_collection\recorded_data\online_app\freq_12HZ'
-data_folder = r'data_collection\recorded_data\online_app\2023-05-24\caric'
+data_folder = r'data_collection\recorded_data\online_app\2023-05-24\caric\all'
 freqs, data = format_data(data_folder)
 fs = 200
 FREQ = {i: freqs[i] for i in range(len(freqs))}
@@ -109,9 +109,9 @@ data_filtered = np.apply_along_axis(cheby_filter, -1, data_notch, fs, low, high,
 # data_filtered = np.squeeze(data_filtered)
 # print('SHAPE: ', data_filtered.shape)
 
-splited_data = split_data(np.squeeze(data_filtered), 800, 0)
+splited_data = split_data(np.squeeze(data_filtered), 4*fs, 0)
 print('SPLITED: ', splited_data.shape)
-#data_filtered = splited_data.transpose((0, 2, 1, 3))
+data_filtered = splited_data.transpose((0, 2, 1, 3))
 #print('SHAPE: ', data_filtered.shape)
 
 # average data acros windows
@@ -214,7 +214,7 @@ def plot_one_freq(n, data, x_axis, freq):
     plt.show()
 
 #plot_trial(0, fft_avg, fft_avg_fs)
-#plot_trial(0, data_fft, fft_fs)
+plot_trial(0, data_fft, fft_fs)
 #plot_one_freq(0, data_fft[0, :, :, :], fft_fs, freqs[0])
 
 #plot_spectrogram(data_filtered, fs)
