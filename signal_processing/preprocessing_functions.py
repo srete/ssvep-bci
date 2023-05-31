@@ -83,15 +83,16 @@ def filter_data(data, t, fs, plotting = True):
     t = t[0:data_filtered.shape[-1]]
 
     if plotting:
+        n_samples = 800
         plt.figure()
         plt.subplot(311)
-        plt.plot(t, noisy_data[0, 0, 0, :], label='original EEG data')
+        plt.plot(t[:n_samples], noisy_data[0, 0, 0, :n_samples], label='original EEG data')
         plt.legend()
         plt.subplot(312)
-        plt.plot(t, data_notch[0, 0, 0, :], label='notch filter')
+        plt.plot(t[:n_samples], data_notch[0, 0, 0, :n_samples], label='notch filter')
         plt.legend()
         plt.subplot(313)
-        plt.plot(t, data_filtered[0, 0, 0, :], label='notch + bandpass filter')
+        plt.plot(t[:n_samples], data_filtered[0, 0, 0, :n_samples], label='notch + bandpass filter')
         plt.legend()
         plt.show()
 

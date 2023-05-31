@@ -15,12 +15,15 @@ plt.rc('ytick', labelsize=SMALL_SIZE)
 plt.rc('legend', fontsize=SMALL_SIZE)
 plt.rc('figure', titlesize=BIGGER_SIZE)
 
+# Ovo promeniti da se ne unosi rucno
+
 EEG_CHN = {
     'O2': 0,
     'Oz': 1,
     'O1': 2,
     'POz': 3
 }
+
 CHN_TO_POS = {v: k for k, v in EEG_CHN.items()}
 
 
@@ -29,8 +32,6 @@ CHN_TO_POS = {v: k for k, v in EEG_CHN.items()}
 data_folder = r'data_collection\recorded_data\online_app\2023-05-30\vukasin_sp'
 refresh_rate = 60   # Hz
 fs = 200    # Hz
-
-print()
 
 freqs, data = format_data(data_folder)
 print(f'Frequencies: {freqs}')
@@ -44,8 +45,9 @@ data_filtered = filter_data(data, t, fs)
 data_filtered = np.squeeze(data_filtered)  # shape = (n_freqs, n_channels, n_samples) if only one trial exists
 print('SHAPE (FILTERED DATA): ', data_filtered.shape)
 
-for freq_idx in range(data_filtered.shape[0]):
-    plot_spectrogram(data_filtered[freq_idx, EEG_CHN['Oz'], :], fs, freq_idx, freqs)
+### Plotting spectrogram ###
+# for freq_idx in range(data_filtered.shape[0]):
+#     plot_spectrogram(data_filtered[freq_idx, EEG_CHN['Oz'], :], fs, freq_idx, freqs)
 
 ############### Spliting data ###########################
 window_length = input('Enter window length in seconds: ')
