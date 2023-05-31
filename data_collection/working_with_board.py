@@ -7,7 +7,7 @@ import pandas as pd
 import numpy as np
 import os
 
-freq = 12
+freq = 12 
 recording_time = 21
 
 session_name = 'caric'
