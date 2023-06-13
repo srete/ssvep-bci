@@ -1,4 +1,4 @@
-Session name: vukasin_sp
+Session name: S04
 Date: 2023-05-30
 Positions of EEG electrodes: 
 	0: O1
@@ -12,6 +12,8 @@ Recording time: 21
 	Recording ended at: 10:42:01
 
 Additional information: 
+
+All at once
 
 zuta - 0
 narandzasta - 1
