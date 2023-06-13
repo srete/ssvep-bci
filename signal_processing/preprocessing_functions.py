@@ -116,10 +116,10 @@ def plot_spectrogram(data, fs, freq_idx, freqs):
     plt.pcolormesh(t, f, spectrogram_data)
     plt.colorbar()
     plt.ylim([6, 32])
-    plt.title(f'Spectrogram of {freqs[freq_idx]} Hz')
+    plt.title(f'Spectrogram of {round(freqs[freq_idx], 2)} Hz')
     plt.ylabel('Frequency [Hz]')
     plt.xlabel('Time [sec]')
-    plt.show()
+    #plt.show()
 
 
 def split_data(data, window_size, overlap):
