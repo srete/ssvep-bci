@@ -1,1 +1,0 @@
-Testiranje biblioteke za openBCI

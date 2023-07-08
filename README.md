@@ -7,3 +7,13 @@ AES projekat, ETF, 2023. god.
 Primer obrade snimeljenih signala i određivanje frekvencije stimulusa na jednom ispitaniku dat je u notebooku [signal_processing_and_classificaiton_example.ipynb](https://github.com/srete/ssvep-bci/blob/main/signal_processing_and_classificaiton_example.ipynb) 
 
 Skripta za akviziviju podataka i snimljeni podaci nalaze se u folderu [data_collection](https://github.com/srete/ssvep-bci/tree/main/data_collection), a funckije za obradu signala i CCA u folderu [signal_processing](https://github.com/srete/ssvep-bci/tree/main/signal_processing).
+
+#### Pokretanje koda
+Nakon kloniranja ovog repo-am kreirati novi (conda) environment sa potrebnim bibliotekama pomoću komande
+
+    conda create --name <env> --file requirements.txt
+   
+   Nakon toga u folderu projekta uneti komandu
+   
+
+    pip install -e

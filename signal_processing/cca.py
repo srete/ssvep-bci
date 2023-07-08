@@ -24,10 +24,10 @@ def find_correlation(eeg_multich, references):
     return result
 
 
-def cca_classify(data_fft, reference_templates, print_corr=False):
+def cca_classify(data, reference_templates, print_corr=False):
     predicted_class = []
     labels = []
-    for f_idx, blink_f in enumerate(data_fft):
+    for f_idx, blink_f in enumerate(data):
         for trial in blink_f:
             result = find_correlation(trial, reference_templates)
             predicted_class.append(np.argmax(result))
