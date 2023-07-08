@@ -8,7 +8,7 @@ Primer obrade snimeljenih signala i određivanje frekvencije stimulusa na jednom
 
 Skripta za akviziviju podataka i snimljeni podaci nalaze se u folderu [data_collection](https://github.com/srete/ssvep-bci/tree/main/data_collection), a funckije za obradu signala i CCA u folderu [signal_processing](https://github.com/srete/ssvep-bci/tree/main/signal_processing).
 
-#### Pokretanje koda
+### Pokretanje koda
 Nakon kloniranja ovog repo-am kreirati novi (conda) environment sa potrebnim bibliotekama pomoću komande
 
     conda create --name <env> --file requirements.txt
