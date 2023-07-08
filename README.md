@@ -1,5 +1,3 @@
-# ssvep-bci
-
 ## Merenje SSVEP-a pomoću OpenBCI sistema
 
 AES projekat, ETF, 2023. god.
