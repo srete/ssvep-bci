@@ -16,4 +16,4 @@ Nakon kloniranja ovog repo-am kreirati novi (conda) environment sa potrebnim bib
    Nakon toga u folderu projekta uneti komandu
    
 
-    pip install -e
+    pip install -e .
