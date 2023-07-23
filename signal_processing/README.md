@@ -6,4 +6,4 @@ First, we removed the DC component from the signal and then applied notch filter
 
 We used CCA method to determine the frequency of the stimulus. The implementation of CCA method is available in [cca.py](https://github.com/srete/ssvep-bci/blob/main/signal_processing/cca.py)
 
-![Signal processing pipline](https://github.com/srete/ssvep-bci/blob/main/signal_processing/signal_processing.png)
+![Signal processing pipline](https://github.com/srete/ssvep-bci/blob/main/signal_processing/signal_processing_pipeline.png)
