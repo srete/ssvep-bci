@@ -1,8 +1,11 @@
 ### Informacije o snimanju
 
-Ispitanici su obeleženi kodom S{broj}_{nacin_stimulacije}.
+The subjects are marked with code S{number}_{stimulation_type}.
 
-Stimulusi su prikazivani pomoću web aplikacije [Quick SSVEP](https://omids.github.io/quickssvep/)   u kojoj se kao stimulus koriste karakteri koji trepere odabranom frekvencijom. U eksperimentima su korišćena dva načina stimulacije: 
+The stimulation types are:
+- a - a single white charachter on a black background, which was flickering at a certain frequency.
+- b - four characters were shown on the screen, each flickering at a different frequency.
 
- - a - na ekranu se prikazuje samo jedan karakter koji sve vreme treperi istom frekvencijom;
- - b - na ekranu se prikazuju 4  karaktera koja istovremeno trepere, svaki svojom frekvencijom, a ispitanik se fokusira na jedan od karaktera.
+The frequencies used in the stimulation are: 7.5, 8.57, 12, 15 and 30 Hz.
+
+Shape of data: (n_blink_freqs, n_trial, n_chanels, n_samples)

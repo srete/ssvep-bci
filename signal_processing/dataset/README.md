@@ -1,6 +1,8 @@
 # Dataset
 
-**Podaci preuzeti iz projekta https://github.com/NTX-McGill/NeuroTechX-McGill-2021/tree/main**
+**We used data from the project https://github.com/NTX-McGill/NeuroTechX-McGill-2021/tree/main just for testing purposes, but we didn't use it for final evaluation.**
+
+This folder contains files and text from the mentioned project.
 
 
 "

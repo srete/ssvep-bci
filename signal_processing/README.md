@@ -1,9 +1,9 @@
-### Obrada signala
+### Signal processing
 
-Postupak obrade signala prikazan je na dijagramu, a kod za obradu u skripti [signal_preprocessing.py](https://github.com/srete/ssvep-bci/blob/main/signal_processing/signal_processing.py)
+Signal processing pipline is shown in the diagran below and the code is available in [signal_preprocessing.py](https://github.com/srete/ssvep-bci/blob/main/signal_processing/signal_processing.py)
 
-![Postupak obrade signala](https://github.com/srete/ssvep-bci/blob/main/signal_processing/signal_processing.png)
+First, we removed the DC component from the signal and then applied notch filter to remove the power line noise. After that, we applied Chabyshev 4th order bandpass filter, to extract the signal in the frequency corresponding to the stimulus.
 
-Za određivanje frekvencije stimulusa korićena je CCA metoda koja je implementirana u skripti [cca.py](https://github.com/srete/ssvep-bci/blob/main/signal_processing/cca.py)
+We used CCA method to determine the frequency of the stimulus. The implementation of CCA method is available in [cca.py](https://github.com/srete/ssvep-bci/blob/main/signal_processing/cca.py)
 
-Folder [dataset](https://github.com/srete/ssvep-bci/tree/main/signal_processing/dataset) sadrži podatke koje nismo mi snimali, ali se mogu iskoristiti za dodatno testiranje. 
+![Signal processing pipline](https://github.com/srete/ssvep-bci/blob/main/signal_processing/signal_processing.png)
